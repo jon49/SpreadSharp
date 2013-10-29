@@ -1,6 +1,6 @@
 ﻿namespace SpreadSharp
 
-module internal Array2D =
+module Array2D =
     
     let ofSeq seq = array2D [|seq|]
 
@@ -10,3 +10,5 @@ module internal Array2D =
             yield! seq'
         |]
         |> array2D
+
+    let ofSeqs' seq = seq

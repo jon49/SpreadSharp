@@ -1,9 +1,8 @@
 ﻿namespace SpreadSharp
 
 open Microsoft.FSharp.Reflection
-open Microsoft.Office.Interop.Excel
 open System
-open Com
+open NetOffice.ExcelApi
 
 module private Utilities =
     
@@ -19,6 +18,10 @@ module private Utilities =
     let recordFieldsNames recordType =
         FSharpType.GetRecordFields recordType
         |> Array.map (fun x -> box x.Name)
+
+    let recordSeqFieldsNames (records: 'T seq) =
+        FSharpType.GetRecordFields (typeof<'T>)
+        |> Array.map (fun x -> box (x.Name.Replace("_", " ")))
 
     let fieldsArray records =
         records

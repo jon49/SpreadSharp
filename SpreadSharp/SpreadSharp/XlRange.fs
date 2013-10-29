@@ -1,7 +1,8 @@
 ﻿namespace SpreadSharp
 
 open System
-open Microsoft.Office.Interop.Excel
+open NetOffice.ExcelApi
+open ExcelExtensions
 open Types
 
 module XlRange =
@@ -12,7 +13,6 @@ module XlRange =
     /// <returns>The range object.</returns>
     let get (worksheet : Worksheet) (rangeString : string) =
         worksheet.Range rangeString
-        |> Com.pushComObj
 
     /// <summary>Selects a range of cells.</summary>
     /// <param name="range">The range to select.</param>
@@ -48,16 +48,45 @@ module XlRange =
     /// <param name="copyOrigin">The column index, count starts at 1.</param>
     let insert (range : Range) (shift : ShiftDirection) = range.Insert shift |> ignore
 
+    /// <summary>Offsets the range by row/column.</summary>
+    /// <param name="range">The range to offset.</param>
+    /// <param name="byRow">The offset of the row position.</param>
+    /// <param name="byRow">The offset of the column position.</param>
+    let offset (byRow : int) (byColumn : int) (range : Range) = range.get_Offset(byRow, byColumn)
+
+    /// <summary>Resizes the range by row/column.</summary>
+    /// <param name="range">The range to resize.</param>
+    /// <param name="byRow">The new size of the row.</param>
+    /// <param name="byRow">The new size of the column.</param>
+    let resize (byRow : int) (byColumn : int) (range : Range) = range.get_Resize(byRow, byColumn)
+
     /// <summary>Performs an autofill from a source range to a destination one. The two ranges must overlap.</summary>
     /// <param name="range">The range from which to start.</param>
     /// <param name="destination">The destination range.</param>
     /// <param name="autoFillType">The auto fill type.</param>
     let autoFill (range : Range) destination autoFillType = range.AutoFill(destination, autoFillType) |> ignore
 
+    /// <summary>Format number style in range.</summary>
+    /// <param name="range">The range to format.</param>
+    /// <param name="format">Style of number.</param>
+    let numberFormat (format : string) (range : Range) = range.NumberFormat <- format
+
     /// <summary>Sets the value of a range.</summary>
-    /// <param name="range">The range object.</param>
     /// <param name="value">The value to use.</param>
-    let setValue (range : Range) value = range.Value2 <- value    
+    /// <param name="range">The range object.</param>
+    let setValue (value : Object) (range : Range) = range.ToExcel value
+
+    /// <summary>Sets the value of a range.</summary>
+    /// <param name="value">The value to use.</param>
+    /// <param name="range">The range object.</param>
+    let setFormula (value : Object) (range : Range) = range.ToExcelFormula value
+
+    /// <summary>Gets the value of a range as 2D object array.</summary>
+    /// <param name="range">The range object.</param>
+    let getValue (range : Range) = range.To2dArray()
+
+    /// <summary>Gets the current region of range.</summary>
+    let currentRegion (range : Range) = range.CurrentRegion
 
     module Column =
 
@@ -66,18 +95,14 @@ module XlRange =
         /// <param name="idx">The column index, count starts at 1.</param>
         let byIndex (worksheet : Worksheet) (idx : int) =
             worksheet.Columns.[idx]
-            :?> Range
             |> fun x -> x.EntireColumn
-            |> Com.pushComObj
 
         /// <summary>Returns the range representing the column with the specified header.</summary>
         /// <param name="worksheet">The worksheet containing the column.</param>
         /// <param name="header">The column header.</param>
         let byHeader (worksheet : Worksheet) (header : string) =
             worksheet.Columns.[header]
-            :?> Range
             |> fun x -> x.EntireColumn
-            |> Com.pushComObj
 
         /// <summary>Inserts a column using shift direction and copy origin parameters.</summary>
         /// <param name="range">The range representing the column.</param>
@@ -99,9 +124,7 @@ module XlRange =
         /// <param name="idx">The row index, count starts at 1.</param>
         let byIndex (worksheet : Worksheet) (idx : int) =
             worksheet.Rows.[idx]
-            :?> Range
             |> fun x -> x.EntireRow
-            |> Com.pushComObj
 
         /// <summary>Insert a row using the shift direction and copy origin parameters.</summary>
         /// <param name="range">The range representing the row.</param>

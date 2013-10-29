@@ -5,7 +5,7 @@ open System.Reflection
 module AssemblyInfo =
 
     [<
-        AssemblyCopyright("Copyright Taha Hachana 2012");
+        AssemblyCopyright("Copyright Taha Hachana 2012 - Changed by Jon Nyman 2013");
         AssemblyDescription("Excel Interop Component")  ;
         AssemblyFileVersion("1.0.0.0")                  ;
         AssemblyProduct("SpreadSharp")                  ;

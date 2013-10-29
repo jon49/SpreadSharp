@@ -1,6 +1,6 @@
 ﻿namespace SpreadSharp
 
-open Microsoft.Office.Interop.Excel
+open NetOffice.ExcelApi
 
 module Collections =
 
@@ -29,7 +29,7 @@ module Collections =
         /// <param name="array">The array.</param>
         let toRange range array =
             let array2D = Array2D.ofSeq array
-            XlRange.setValue range array2D
+            XlRange.setValue array2D range
 
         /// <summary>Returns the values of an Excel range as an array.</summary>
         /// <param name="range">The range object.</param>
@@ -59,7 +59,7 @@ module Collections =
         /// <param name="list">The list.</param>
         let toRange range list =
             let array2D = Array2D.ofSeq list
-            XlRange.setValue range array2D
+            XlRange.setValue array2D range 
 
         /// <summary>Returns the values of an Excel range as a list.</summary>
         /// <param name="range">The range object.</param>
@@ -89,7 +89,7 @@ module Collections =
         /// <param name="seq">The seq.</param>
         let toRange range seq =
             let array2D = Array2D.ofSeq seq
-            XlRange.setValue range array2D
+            XlRange.setValue array2D range 
 
         /// <summary>Returns the values of an Excel range as a seq.</summary>
         /// <param name="range">The range object.</param>

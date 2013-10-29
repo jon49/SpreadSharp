@@ -1,7 +1,7 @@
 ﻿namespace SpreadSharp
 
 open System
-open Microsoft.Office.Interop.Excel
+open NetOffice.ExcelApi.Enums
 
 module Types =
 
@@ -15,3 +15,5 @@ module Types =
                 | Down        -> box XlInsertShiftDirection.xlShiftDown
                 | ExcelDecide -> Type.Missing
                 | Right       -> box XlInsertShiftDirection.xlShiftToRight
+
+    

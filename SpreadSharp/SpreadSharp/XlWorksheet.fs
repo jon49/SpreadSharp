@@ -1,17 +1,18 @@
 ﻿namespace SpreadSharp
 
-open Microsoft.Office.Interop.Excel
+open NetOffice.ExcelApi
+open SpreadSharp.Utilities
 
 module XlWorksheet =
+    
+    let missing = System.Type.Missing
 
     /// <summary>Adds a worksheet to the specified workbook and optionally sets its name.</summary>
     /// <param name="workbook">The workbook object.</param>
     /// <param name="nameOption">The name of the worksheet.</param>
     /// <returns>The new worksheet.</returns>
     let add (workbook : Workbook) nameOption =
-        workbook.Worksheets.Add()
-        :?> Worksheet
-        |> Com.pushComObj
+        workbook.Worksheets.Add() :?> Worksheet
         |> Utilities.setWorksheetName nameOption
 
     /// <summary>Adds a worksheet to the specified workbook before another one and optionally sets its name.</summary>
@@ -20,9 +21,7 @@ module XlWorksheet =
     /// <param name="nameOption">The name of the worksheet.</param>
     /// <returns>The new worksheet.</returns>
     let addBefore (workbook : Workbook) worksheet nameOption =
-        workbook.Worksheets.Add(Before = worksheet)
-        :?> Worksheet
-        |> Com.pushComObj
+        workbook.Worksheets.Add(worksheet) :?> Worksheet
         |> Utilities.setWorksheetName nameOption
 
     /// <summary>Adds a worksheet to the specified workbook after another one and optionally sets its name.</summary>
@@ -31,9 +30,8 @@ module XlWorksheet =
     /// <param name="nameOption">The name of the worksheet.</param>
     /// <returns>The new worksheet.</returns>
     let addAfter (workbook : Workbook) worksheet nameOption =
-        workbook.Worksheets.Add(After = worksheet)
+        workbook.Worksheets.Add(missing, worksheet)
         :?> Worksheet
-        |> Com.pushComObj
         |> Utilities.setWorksheetName nameOption
 
     /// <summary>Adds multiple worksheets to the specified workbook.</summary>
@@ -44,7 +42,6 @@ module XlWorksheet =
         |> List.iter (fun _ ->
             workbook.Worksheets.Add()
             :?> Worksheet
-            |> Com.pushComObj
             |> ignore)
 
     /// <summary>Adds multiple worksheets before another one to the specified workbook.</summary>
@@ -54,9 +51,8 @@ module XlWorksheet =
     let addManyBefore (workbook : Workbook) worksheet count =
         [1 .. count]
         |> List.iter (fun _ ->
-            workbook.Worksheets.Add(Before = worksheet)
+            workbook.Worksheets.Add(worksheet)
             :?> Worksheet
-            |> Com.pushComObj
             |> ignore)
 
     /// <summary>Adds multiple worksheets after another one to the specified workbook.</summary>
@@ -66,9 +62,8 @@ module XlWorksheet =
     let addManyAfter (workbook : Workbook) worksheet count =
         [1 .. count]
         |> List.iter (fun _ ->
-            workbook.Worksheets.Add(After = worksheet)
+            workbook.Worksheets.Add(missing, worksheet)
             :?> Worksheet
-            |> Com.pushComObj
             |> ignore)
 
     /// <summary>Moves a worksheet to a new workbook.</summary>
@@ -78,12 +73,12 @@ module XlWorksheet =
     /// <summary>Moves a worksheet before another.</summary>
     /// <param name="worksheet">The worksheet to move.</param>
     /// <param name="beforeWorksheet">The worksheet before which the moved one must be placed.</param>
-    let moveBefore (worksheet : Worksheet) beforeWorksheet = worksheet.Move(Before = beforeWorksheet)
+    let moveBefore (worksheet : Worksheet) beforeWorksheet = worksheet.Move(beforeWorksheet)
 
     /// <summary>Moves a worksheet after another.</summary>
     /// <param name="worksheet">The worksheet to move.</param>
     /// <param name="beforeWorksheet">The worksheet after which the moved one must be placed.</param>
-    let moveAfter (worksheet : Worksheet) afterWorksheet = worksheet.Move(After = afterWorksheet)
+    let moveAfter (worksheet : Worksheet) afterWorksheet = worksheet.Move(missing, afterWorksheet)
 
     /// <summary>Copies a worksheet to a new workbook.</summary>
     /// <param name="worksheet">The worksheet to copy.</param>
@@ -92,20 +87,20 @@ module XlWorksheet =
     /// <summary>Copies a worksheet before another.</summary>
     /// <param name="worksheet">The worksheet to copy.</param>
     /// <param name="beforeWorksheet">The worksheet before which the copied one must be placed.</param>
-    let copyBefore (worksheet : Worksheet) beforeWorksheet = worksheet.Copy(Before = beforeWorksheet)
+    let copyBefore (worksheet : Worksheet) beforeWorksheet = worksheet.Copy(beforeWorksheet)
 
     /// <summary>Copies a worksheet after another.</summary>
     /// <param name="worksheet">The worksheet to copy.</param>
     /// <param name="afterWorksheet">The worksheet after which the copied one must be placed.</param>
-    let copyAfter (worksheet : Worksheet) afterWorksheet = worksheet.Copy(After = afterWorksheet)
+    let copyAfter (worksheet : Worksheet) afterWorksheet = worksheet.Copy(missing, afterWorksheet)
 
     /// <summary>Hides a worksheet.</summary>
     /// <param name="worksheet">The worksheet to hide.</param>
-    let hide (worksheet : Worksheet) = worksheet.Visible <- XlSheetVisibility.xlSheetHidden
+    let hide (worksheet : Worksheet) = worksheet.Visible <- Enums.XlSheetVisibility.xlSheetHidden
 
     /// <summary>Displays a hidden worksheet.</summary>
     /// <param name="worksheet">The hidden worksheet.</param>
-    let unhide (worksheet : Worksheet) = worksheet.Visible <- XlSheetVisibility.xlSheetVisible
+    let unhide (worksheet : Worksheet) = worksheet.Visible <- Enums.XlSheetVisibility.xlSheetVisible
 
     /// <summary>Returns the worksheet located at the specified index.</summary>
     /// <param name="workbook">The workbook containing the target worksheet.</param>
